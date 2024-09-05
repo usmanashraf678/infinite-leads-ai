@@ -1,7 +1,7 @@
 import logging
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
-from utils import save_to_json, get_new_posts, save_raw_posts_to_csv, extract_listing_details, read_sample_results, save_posts_with_gpt_results_to_csv
+from utils import save_to_json, get_new_posts, save_raw_posts_to_csv, extract_listing_details, read_sample_results, save_posts_with_gpt_results_to_csv, hit_apify_api
 
 load_dotenv(override=True)
 

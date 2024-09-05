@@ -13,9 +13,9 @@ apify_sample_response = "apify_sample_response.json"
 load_dotenv(override=True)
 
 API_KEY = os.getenv("API_KEY")
-client = ApifyClient(API_KEY)
+apify_client = ApifyClient(API_KEY)
 
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 
 def save_to_json(results, json_file_name):
@@ -146,7 +146,7 @@ def extract_post_details(text):
 
     while retries < max_retries:
         try:
-            completion = client.chat.completions.create(
+            completion = openai_client.chat.completions.create(
                 messages=[
                     {
                         "role": "system",
@@ -165,6 +165,8 @@ def extract_post_details(text):
 
             # response_text = completion.choices[0].message
             response_text = completion.choices[0].message.content
+            logging.info(f"1. Response text: {response_text}")
+
             # response_text = completion['choices'][0]['message']['content']
 
             # Check if the response is empty
@@ -177,19 +179,19 @@ def extract_post_details(text):
                 return {"error": "NO DETAIL FOUND response received from OpenAI."}
 
             # Remove backticks and any surrounding whitespace
-            cleaned_response = response_text.strip("```json").strip("```").strip()
+            cleaned_response = response_text.strip().strip("```json").strip("```").strip()
 
             try:
                 # Attempt to parse JSON from the cleaned response
                 extracted_data = json.loads(cleaned_response)
                 logging.info("Successfully extracted JSON data.")
             except json.JSONDecodeError as e:
-                logging.error(f"JSON decode error: {e}")
+                logging.error(f"JSON decode error: {e}, {cleaned_response}")
                 extracted_data = {"error": "Failed to extract data."}
 
             # time.sleep(10)
 
-            logging.info(f"Response from OpenAI: {extracted_data}")
+            logging.info(f"JSON read from cleaned response: {extracted_data}")
             return extracted_data
 
         except Exception as e:
@@ -246,11 +248,11 @@ def hit_apify_api(group_url, results_limit, view_option, formatted_date):
         "onlyPostsNewerThan": formatted_date,
     }
 
-    run = client.actor("apify/facebook-groups-scraper").call(run_input=run_input)
+    run = apify_client.actor("apify/facebook-groups-scraper").call(run_input=run_input)
     logging.info("Scraping done, fetching results")
 
     results = []
-    for item in client.dataset(run["defaultDatasetId"]).iterate_items():
+    for item in apify_client.dataset(run["defaultDatasetId"]).iterate_items():
         results.append(item)
 
     save_to_json(results, apify_response_file)
