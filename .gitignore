@@ -1,0 +1,8 @@
+venv/
+.env
+apify_response.json
+apify_sample_response.json
+posts.csv
+processed_posts.csv
+__pycache__/
+
