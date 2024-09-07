@@ -85,14 +85,23 @@ def get_new_posts(posts):
     # read existing posts from posts.csv file
     existing_post_ids = set()
     try:
-        with open("posts.csv", "r", encoding="utf-8") as csvfile:
-            for line in csvfile:
-                post_id = line.split(",")[0].strip()
-                existing_post_ids.add(post_id)
+
+        # Open the CSV file
+        with open('posts.csv', newline='', encoding="utf-8") as csvfile:
+            csv_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+    
+            # Loop through the rows in the file
+            for row in csv_reader:
+                # logging.info(f"line: {row}")   
+                post_id = row[0]
+                existing_post_ids.add(post_id)     
+                
     except FileNotFoundError:
         logging.error("Posts file not found")
     except UnicodeDecodeError as e:
         logging.error(f"Encoding error while reading the posts file: {e}")
+
+    logging.info(f"Existing post IDs: {existing_post_ids}")
 
     new_posts = []
     for post in posts:

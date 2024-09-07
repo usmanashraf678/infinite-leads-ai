@@ -85,10 +85,10 @@ def scrape_facebook_group(group_url, results_limit, view_option, formatted_date)
     new_posts = get_new_posts(posts)
     save_raw_posts_to_csv(new_posts)
     
-    listings_details = extract_listing_details(new_posts)
-    logging.info(listings_details)
+    # listings_details = extract_listing_details(new_posts)
+    # logging.info(listings_details)
     
-    save_posts_with_gpt_results_to_csv(listings_details)
+    # save_posts_with_gpt_results_to_csv(listings_details)
 
 
 def scrape_a_batch_of_groups(groups):
